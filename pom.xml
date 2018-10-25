@@ -9,6 +9,8 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
+        <env>dev</env>
+        <docker.image.name>au-property-mgmt-rest</docker.image.name>
         <spring.boot.version>2.0.3.RELEASE</spring.boot.version>
         <lombok.version>1.16.16</lombok.version>
     </properties>
@@ -62,6 +64,81 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring.boot.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <configuration>
+                    <imageName>${docker.image.name}</imageName>
+                    <baseImage>java:8</baseImage>
+                    <entryPoint>
+                        ["java", "-cp", "/${project.artifactId}/app/:/${project.artifactId}/applib/*", "au.property.mgmt.rest.Application", "--spring.profiles.active=${env}"]
+                    </entryPoint>
+                    <resources>
+                        <resource>
+                            <targetPath>${project.artifactId}/app</targetPath>
+                            <directory>${project.build.directory}/classes</directory>
+                        </resource>
+                        <resource>
+                            <targetPath>${project.artifactId}/app</targetPath>
+                            <directory>${project.basedir}/src/main/docker/${env}</directory>
+                        </resource>
+                        <resource>
+                            <targetPath>${project.artifactId}/applib</targetPath>
+                            <directory>${project.build.directory}/lib</directory>
+                        </resource>
+                    </resources>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>build-image</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 
