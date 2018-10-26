@@ -30,4 +30,6 @@ public class Address {
 
     private String name;
 
+    private String comment;
+
 }
