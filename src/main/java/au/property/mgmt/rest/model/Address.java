@@ -22,6 +22,12 @@ public class Address {
 
     private String house;
 
-    private Coordinate coordinate;
+    private String apartment;
+
+    private Coordinate coordinates;
+
+    private String streetuUrl;
+
+    private String name;
 
 }

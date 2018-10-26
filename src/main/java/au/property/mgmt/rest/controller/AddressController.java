@@ -4,6 +4,7 @@ import au.property.mgmt.rest.model.Address;
 import au.property.mgmt.rest.service.AddressService;
 import au.property.mgmt.rest.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +35,8 @@ public class AddressController {
 
     @RequestMapping(value = "address/{id}", method = RequestMethod.GET)
     public ResponseEntity<Address> findAddress(@PathVariable("id") long id) {
-        return ResponseEntity.ok(addressService.search(id));
+        Address address = addressService.search(id);
+        return address != null ? ResponseEntity.ok(address) : new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
     @RequestMapping(value = "distance/{id1}/{id2}", method = RequestMethod.GET)
