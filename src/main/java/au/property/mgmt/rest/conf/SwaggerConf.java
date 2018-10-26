@@ -22,6 +22,9 @@ public class SwaggerConf {
     @Value("${swagger.base.path:}")
     private String basePath;
 
+    @Value("${swagger.host:}")
+    private String host;
+
     @Bean
     public Docket api(ServletContext servletContext) {
         return new Docket(DocumentationType.SWAGGER_2).
@@ -32,7 +35,7 @@ public class SwaggerConf {
                         return basePath + super.getApplicationBasePath();
                     }
 
-                })
+                }).host(host)
                 .select()
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
