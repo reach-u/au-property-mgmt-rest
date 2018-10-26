@@ -3,7 +3,6 @@ package au.property.mgmt.rest.service;
 import au.property.mgmt.rest.elasticsearch.ElasticSearcher;
 import au.property.mgmt.rest.elasticsearch.Indices;
 import au.property.mgmt.rest.model.Address;
-import au.property.mgmt.rest.model.Coordinate;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +16,7 @@ import java.util.Collection;
 @Service
 public class AddressServiceImpl implements AddressService {
 
-    private static final Address DUMMY = Address.builder()
-            .id(10432)
-            .country("Kenya")
-            .county("Mombasa")
-            .city("Mombasa")
-            .street("Magongo rd")
-            .house("Alkheral Bakery")
-            .coordinates(new Coordinate(39.663940, -4.057460))
-            .build();
+    private static final int LIMIT = 100;
 
     private final ElasticSearcher searcher;
 
@@ -36,9 +27,8 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Address[] search(String query) {
-        return new Address[] {
-                DUMMY
-        };
+        return AddressConverter.convert(searcher.search(
+                ElasticQueryBuilder.createGeocodeQuery(query), Indices.address(), LIMIT)).toArray(new Address[0]);
     }
 
     @Override
