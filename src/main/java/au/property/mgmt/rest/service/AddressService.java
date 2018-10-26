@@ -9,4 +9,6 @@ public interface AddressService {
 
     Address[] search(String query);
 
+    Address search(long id);
+
 }

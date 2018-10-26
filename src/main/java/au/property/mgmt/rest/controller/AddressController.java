@@ -5,6 +5,7 @@ import au.property.mgmt.rest.service.AddressService;
 import au.property.mgmt.rest.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,6 +28,11 @@ public class AddressController {
     @RequestMapping(value = "address", method = RequestMethod.GET)
     public ResponseEntity<Address[]> findAddress(@RequestParam("q") String query) {
         return ResponseEntity.ok(addressService.search(query));
+    }
+
+    @RequestMapping(value = "address/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Address> findAddress(@PathVariable("id") long id) {
+        return ResponseEntity.ok(addressService.search(id));
     }
 
 }

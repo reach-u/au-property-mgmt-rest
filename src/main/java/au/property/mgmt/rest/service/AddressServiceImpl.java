@@ -10,19 +10,26 @@ import org.springframework.stereotype.Service;
 @Service
 public class AddressServiceImpl implements AddressService {
 
+    private static final Address DUMMY = Address.builder()
+            .id(10432)
+            .country("Kenya")
+            .county("Mombasa")
+            .city("Mombasa")
+            .street("Magongo rd")
+            .house("Alkheral Bakery")
+            .coordinate(new Coordinate(39.663940, -4.057460))
+            .build();
+
     @Override
     public Address[] search(String query) {
         return new Address[] {
-                Address.builder()
-                        .id(10432)
-                        .country("Kenya")
-                        .county("Mombasa")
-                        .city("Mombasa")
-                        .street("Magongo rd")
-                        .house("Alkheral Bakery")
-                        .coordinate(new Coordinate(39.663940, -4.057460))
-                        .build()
+                DUMMY
         };
+    }
+
+    @Override
+    public Address search(long id) {
+        return DUMMY;
     }
 
 }
