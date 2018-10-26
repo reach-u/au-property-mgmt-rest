@@ -1,19 +1,23 @@
 package au.property.mgmt.rest.service;
 
-import com.google.common.collect.Lists;
+import au.property.mgmt.rest.model.Address;
+import au.property.mgmt.rest.model.GazetteerRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author taaviv @ 26.10.18
@@ -29,41 +33,82 @@ public class GazetteerServiceImpl implements GazetteerService {
     }
 
     @Override
-    public List<String> getCountries() {
-        List<String> results = Lists.newArrayList();
-        SearchResponse sr = client.prepareSearch("address")
-                .setSearchType(SearchType.QUERY_THEN_FETCH)
-                .setQuery(QueryBuilders.matchAllQuery())
-                .addAggregation(AggregationBuilders
-                        .terms("countries")
-                        .field("collector.country")
-                        .size(10_000))
-                .setSize(10_000)
-                .execute().actionGet(TimeValue.timeValueSeconds(9000));
-        Terms t = sr.getAggregations().get("countries");
-        for (Terms.Bucket bucket : t.getBuckets()) {
-            results.add(bucket.getKey().toString());
-        }
-        return results;
+    public Collection<String> getCountries() {
+        return extractAggregations(search(QueryBuilders.matchAllQuery(), "collector.country"));
     }
 
     @Override
-    public List<String> getCounties(String country) {
-        List<String> results = Lists.newArrayList();
-        SearchResponse sr = client.prepareSearch("address")
+    public Collection<String> getCounties(GazetteerRequest req) {
+        return extractAggregations(search(queryBuilder(req), "collector.county"));
+    }
+
+    @Override
+    public Collection<String> getCities(GazetteerRequest req) {
+        return extractAggregations(search(queryBuilder(req), "collector.city"));
+    }
+
+    @Override
+    public Collection<String> getStreets(GazetteerRequest req) {
+        return extractAggregations(search(queryBuilder(req), "collector.street"));
+    }
+
+    @Override
+    public Collection<String> getHouses(GazetteerRequest req) {
+        return extractAggregations(search(queryBuilder(req), "collector.house"));
+    }
+
+    @Override
+    public Collection<Address> getAddresses(GazetteerRequest req) {
+        return AddressConverter.convert(
+                client.prepareSearch("address")
+                        .setSearchType(SearchType.QUERY_THEN_FETCH)
+                        .setQuery(queryBuilder(req))
+                        .setSize(10_000)
+                        .execute().actionGet(TimeValue.timeValueSeconds(9000))
+        );
+    }
+
+    private BoolQueryBuilder queryBuilder(GazetteerRequest req) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+
+        if (req.getCountry() != null) {
+            boolQuery.must(QueryBuilders.matchQuery("collector.country", req.getCountry()).operator(Operator.AND));
+        }
+
+        if (req.getCounty() != null) {
+            boolQuery.must(QueryBuilders.matchQuery("collector.county", req.getCounty()).operator(Operator.AND));
+        }
+
+        if (req.getCity() != null) {
+            boolQuery.must(QueryBuilders.matchQuery("collector.city", req.getCity()).operator(Operator.AND));
+        }
+
+        if (req.getStreet() != null) {
+            boolQuery.must(QueryBuilders.matchQuery("collector.street", req.getStreet()).operator(Operator.AND));
+        }
+
+        if (req.getHouse() != null) {
+            boolQuery.must(QueryBuilders.matchQuery("collector.house", req.getHouse()));
+        }
+
+        return boolQuery;
+    }
+
+    private List<String> extractAggregations(SearchResponse sr) {
+        Terms terms = sr.getAggregations().get("terms");
+        return terms.getBuckets().stream().map(bucket -> bucket.getKey().toString()).collect(Collectors.toList());
+    }
+
+    private SearchResponse search(QueryBuilder query, String field) {
+        return client.prepareSearch("address")
                 .setSearchType(SearchType.QUERY_THEN_FETCH)
-                .setQuery(QueryBuilders.matchQuery("collector.country", country))
+                .setQuery(query)
                 .addAggregation(AggregationBuilders
-                        .terms("countries")
-                        .field("collector.county")
+                        .terms("terms")
+                        .field(field)
                         .size(10_000))
                 .setSize(10_000)
                 .execute().actionGet(TimeValue.timeValueSeconds(9000));
-        Terms t = sr.getAggregations().get("countries");
-        for (Terms.Bucket bucket : t.getBuckets()) {
-            results.add(bucket.getKey().toString());
-        }
-        return results;
     }
 
 }
