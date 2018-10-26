@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Random;
+
 /**
  * @author taaviv @ 26.10.18
  */
@@ -33,6 +35,11 @@ public class AddressController {
     @RequestMapping(value = "address/{id}", method = RequestMethod.GET)
     public ResponseEntity<Address> findAddress(@PathVariable("id") long id) {
         return ResponseEntity.ok(addressService.search(id));
+    }
+
+    @RequestMapping(value = "distance/{id1}/{id2}", method = RequestMethod.GET)
+    public ResponseEntity<Integer> calculateDistance(@PathVariable("id1") long id1, @PathVariable("id2") long id2) {
+        return ResponseEntity.ok(new Random().nextInt(25_000));
     }
 
 }
