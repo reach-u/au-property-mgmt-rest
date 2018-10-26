@@ -2,6 +2,7 @@ package au.property.mgmt.rest.service;
 
 import au.property.mgmt.rest.model.Address;
 import au.property.mgmt.rest.model.GazetteerRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
  * @author taaviv @ 26.10.18
  */
 @Service
+@Slf4j
 public class GazetteerServiceImpl implements GazetteerService {
 
     private final Client client;
@@ -34,31 +36,37 @@ public class GazetteerServiceImpl implements GazetteerService {
 
     @Override
     public Collection<String> getCountries() {
+        log.info("get countries");
         return extractAggregations(search(QueryBuilders.matchAllQuery(), "collector.country"));
     }
 
     @Override
     public Collection<String> getCounties(GazetteerRequest req) {
+        log.info("get counties: {}", req);
         return extractAggregations(search(queryBuilder(req), "collector.county"));
     }
 
     @Override
     public Collection<String> getCities(GazetteerRequest req) {
+        log.info("get cities: {}", req);
         return extractAggregations(search(queryBuilder(req), "collector.city"));
     }
 
     @Override
     public Collection<String> getStreets(GazetteerRequest req) {
+        log.info("get streets: {}", req);
         return extractAggregations(search(queryBuilder(req), "collector.street"));
     }
 
     @Override
     public Collection<String> getHouses(GazetteerRequest req) {
+        log.info("get houses: {}", req);
         return extractAggregations(search(queryBuilder(req), "collector.house"));
     }
 
     @Override
     public Collection<Address> getAddresses(GazetteerRequest req) {
+        log.info("get addresses: {}", req);
         return AddressConverter.convert(
                 client.prepareSearch("address")
                         .setSearchType(SearchType.QUERY_THEN_FETCH)
