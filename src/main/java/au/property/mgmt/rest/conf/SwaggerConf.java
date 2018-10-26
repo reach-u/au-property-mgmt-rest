@@ -37,7 +37,7 @@ public class SwaggerConf {
 
                 }).host(host)
                 .select()
-                .apis(RequestHandlerSelectors.any())
+                .apis(RequestHandlerSelectors.basePackage("au.property.mgmt.rest.controller.pub"))
                 .paths(PathSelectors.any())
                 .build();
     }

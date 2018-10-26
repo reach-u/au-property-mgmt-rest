@@ -1,4 +1,4 @@
-package au.property.mgmt.rest.controller;
+package au.property.mgmt.rest.controller.pub;
 
 import au.property.mgmt.rest.model.Address;
 import au.property.mgmt.rest.model.GazetteerRequest;
