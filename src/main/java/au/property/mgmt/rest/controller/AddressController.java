@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Random;
-
 /**
  * @author taaviv @ 26.10.18
  */
@@ -41,7 +39,29 @@ public class AddressController {
 
     @RequestMapping(value = "distance/{id1}/{id2}", method = RequestMethod.GET)
     public ResponseEntity<Integer> calculateDistance(@PathVariable("id1") long id1, @PathVariable("id2") long id2) {
-        return ResponseEntity.ok(new Random().nextInt(25_000));
+        Address address1 = addressService.search(id1);
+        Address address2 = addressService.search(id2);
+
+        if (address1 == null || address2 == null) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(distance(
+                address1.getCoordinates().getLat(), address2.getCoordinates().getLat(),
+                address1.getCoordinates().getLon(), address2.getCoordinates().getLon()
+        ));
+    }
+
+    private static int distance(double lat1, double lat2, double lon1, double lon2) {
+        final int R = 6371;
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return (int) (R * c * 1000);
     }
 
 }
