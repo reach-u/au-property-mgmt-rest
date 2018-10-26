@@ -1,6 +1,7 @@
 package au.property.mgmt.rest.service;
 
 import au.property.mgmt.rest.model.Address;
+import au.property.mgmt.rest.model.Coordinate;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,6 +20,7 @@ public class AddressServiceImpl implements AddressService {
                         .city("Mombasa")
                         .street("Magongo rd")
                         .house("Alkheral Bakery")
+                        .coordinate(new Coordinate(39.663940, -4.057460))
                         .build()
         };
     }
