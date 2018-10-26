@@ -32,4 +32,6 @@ public class Address {
 
     private String comment;
 
+    private DetailedData detailedData;
+
 }
