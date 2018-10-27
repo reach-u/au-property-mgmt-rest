@@ -1,5 +1,6 @@
 package au.property.mgmt.rest.service;
 
+import au.property.mgmt.rest.elasticsearch.ElasticPersister;
 import au.property.mgmt.rest.elasticsearch.ElasticSearcher;
 import au.property.mgmt.rest.elasticsearch.Indices;
 import au.property.mgmt.rest.model.Address;
@@ -22,9 +23,12 @@ public class AddressServiceImpl implements AddressService {
 
     private final ElasticSearcher searcher;
 
+    private final ElasticPersister persister;
+
     @Autowired
-    public AddressServiceImpl(ElasticSearcher searcher) {
+    public AddressServiceImpl(ElasticSearcher searcher, ElasticPersister persister) {
         this.searcher = searcher;
+        this.persister = persister;
     }
 
     @Override
@@ -45,7 +49,10 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public Address changeOwner(Address address, long newOwnerIdCode) {
         log.info("change owner: new owner={}, {}", newOwnerIdCode, address);
-        return null;
+        address.getDetailedData().setPreviousOwner(address.getDetailedData().getCurrentOwner());
+        address.getDetailedData().setCurrentOwner(newOwnerIdCode);
+        persister.save(address, Indices.address());
+        return address;
     }
 
 }

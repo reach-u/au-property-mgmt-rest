@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(Constants.PRIVATE_API_V1_URL + "/re")
 public class RealEstateController {
 
-    private static final long[] DUMMY_BUYERS = new long[] { 70101010000L, 80101010001L };
-
     private final RealEstateService realEstateService;
 
     private final AddressService addressService;
