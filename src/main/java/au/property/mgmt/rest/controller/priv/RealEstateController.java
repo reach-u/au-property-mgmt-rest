@@ -30,15 +30,12 @@ public class RealEstateController {
         this.addressService = addressService;
     }
 
-    @RequestMapping(value = "buy/{addressId}", method = RequestMethod.POST)
-    public ResponseEntity<Deal> buy(@PathVariable int addressId) {
+    @RequestMapping(value = "buy/{buyerIdCode}/{addressId}", method = RequestMethod.POST)
+    public ResponseEntity<Deal> buy(@PathVariable long buyerIdCode, @PathVariable long addressId) {
         Address address = addressService.search(addressId);
         if (address == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        long buyerIdCode = DUMMY_BUYERS[0] == address.getDetailedData().getCurrentOwner() ?
-                DUMMY_BUYERS[1] : DUMMY_BUYERS[0];
 
         return ResponseEntity.ok(realEstateService.buy(buyerIdCode, address));
     }
