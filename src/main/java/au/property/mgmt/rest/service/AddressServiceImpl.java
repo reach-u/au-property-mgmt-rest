@@ -40,6 +40,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Address[] findAll() {
+        log.info("Find all");
         return AddressConverter.convert(searcher.search(
                 QueryBuilders.matchAllQuery(), Indices.address(), LIMIT)).toArray(new Address[0]);
     }
