@@ -42,4 +42,10 @@ public class AddressServiceImpl implements AddressService {
         return addresses.isEmpty() ? null : addresses.iterator().next();
     }
 
+    @Override
+    public Address changeOwner(Address address, long newOwnerIdCode) {
+        log.info("change owner: new owner={}, {}", newOwnerIdCode, address);
+        return null;
+    }
+
 }

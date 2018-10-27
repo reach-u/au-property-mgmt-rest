@@ -11,4 +11,6 @@ public interface AddressService {
 
     Address search(long id);
 
+    Address changeOwner(Address address, long newOwnerIdCode);
+
 }

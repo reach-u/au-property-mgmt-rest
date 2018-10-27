@@ -10,4 +10,8 @@ public interface RealEstateService {
 
     Deal buy(long buyerIdCode, Address address);
 
+    Deal signByBuyer(long transactionId);
+
+    Deal signBySeller(long transactionId);
+
 }

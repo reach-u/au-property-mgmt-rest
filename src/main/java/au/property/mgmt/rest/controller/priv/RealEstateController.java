@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author taaviv @ 26.10.18
  */
 @RestController
-@RequestMapping(Constants.PRIVATE_API_V1_URL)
+@RequestMapping(Constants.PRIVATE_API_V1_URL + "/re")
 public class RealEstateController {
 
     private static final long[] DUMMY_BUYERS = new long[] { 70101010000L, 80101010001L };
@@ -30,7 +30,7 @@ public class RealEstateController {
         this.addressService = addressService;
     }
 
-    @RequestMapping(value = "buy/{addressId}", method = RequestMethod.GET)
+    @RequestMapping(value = "buy/{addressId}", method = RequestMethod.POST)
     public ResponseEntity<Deal> buy(@PathVariable int addressId) {
         Address address = addressService.search(addressId);
         if (address == null) {
@@ -41,6 +41,18 @@ public class RealEstateController {
                 DUMMY_BUYERS[1] : DUMMY_BUYERS[0];
 
         return ResponseEntity.ok(realEstateService.buy(buyerIdCode, address));
+    }
+
+    @RequestMapping(value = "sign_by_buyer/{transactionId}", method = RequestMethod.POST)
+    public ResponseEntity<Deal> signByBuyer(@PathVariable long transactionId) {
+        Deal deal = realEstateService.signByBuyer(transactionId);
+        return deal != null ? ResponseEntity.ok(deal) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @RequestMapping(value = "sign_by_seller/{transactionId}", method = RequestMethod.POST)
+    public ResponseEntity<Deal> signBySeller(@PathVariable long transactionId) {
+        Deal deal = realEstateService.signBySeller(transactionId);
+        return deal != null ? ResponseEntity.ok(deal) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 }
