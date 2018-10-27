@@ -22,6 +22,8 @@ public class Deal {
 
     private Date signedBySeller;
 
+    private boolean paid;
+
     public Deal(long transactionId, long buyerIdCode, Address address) {
         this.transactionId = transactionId;
         this.buyerIdCode = buyerIdCode;

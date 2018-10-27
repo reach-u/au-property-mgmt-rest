@@ -40,12 +40,14 @@ public class RealEstateServiceImpl implements RealEstateService {
 
     @Override
     public Deal signByBuyer(long transactionId) {
+        log.info("sign by buyer: transaction={}", transactionId);
         return sign(transactionId, Deal::signByBuyer);
     }
 
 
     @Override
     public Deal signBySeller(long transactionId) {
+        log.info("sign by seller: transaction={}", transactionId);
         return sign(transactionId, Deal::signBySeller);
     }
 
@@ -55,10 +57,11 @@ public class RealEstateServiceImpl implements RealEstateService {
     }
 
     private Deal sign(long transactionId, Consumer<Deal> sign) {
-        log.info("sign by buyer: transaction={}", transactionId);
         Deal deal = dealCache.getIfPresent(transactionId);
         if (deal != null) {
-            // TODO check payment
+            if (!deal.isPaid()) {
+                throw new IllegalStateException("State tax is not paid");
+            }
             sign.accept(deal);
             if (deal.isSignedByAll()) {
                 deal.setAddress(addressService.changeOwner(deal.getAddress(), deal.getBuyerIdCode()));

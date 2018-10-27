@@ -4,6 +4,7 @@ import au.property.mgmt.rest.model.Address;
 import au.property.mgmt.rest.model.Deal;
 import au.property.mgmt.rest.service.AddressService;
 import au.property.mgmt.rest.service.RealEstateService;
+import au.property.mgmt.rest.service.TaxPaymentService;
 import au.property.mgmt.rest.util.Constants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,13 @@ public class RealEstateController {
 
     private final AddressService addressService;
 
-    public RealEstateController(RealEstateService realEstateService, AddressService addressService) {
+    private final TaxPaymentService paymentService;
+
+    public RealEstateController(RealEstateService realEstateService, AddressService addressService,
+                                TaxPaymentService paymentService) {
         this.realEstateService = realEstateService;
         this.addressService = addressService;
+        this.paymentService = paymentService;
     }
 
     @RequestMapping(value = "buy/{buyerIdCode}/{addressId}", method = RequestMethod.POST)
@@ -36,6 +41,16 @@ public class RealEstateController {
         }
 
         return ResponseEntity.ok(realEstateService.buy(buyerIdCode, address));
+    }
+
+    @RequestMapping(value = "pay_tax/{transactionId}", method = RequestMethod.POST)
+    public ResponseEntity pay(@PathVariable long transactionId) {
+        Deal deal = realEstateService.findTransactionDetails(transactionId);
+        if (deal == null) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+        boolean success = paymentService.pay(deal);
+        return success ? new ResponseEntity(HttpStatus.OK) : new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @RequestMapping(value = "sign_by_buyer/{transactionId}", method = RequestMethod.POST)
