@@ -50,4 +50,10 @@ public class RealEstateController {
         return deal != null ? ResponseEntity.ok(deal) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @RequestMapping(value = "details/{transactionId}", method = RequestMethod.GET)
+    public ResponseEntity<Deal> details(@PathVariable long transactionId) {
+        Deal deal = realEstateService.findTransactionDetails(transactionId);
+        return deal != null ? ResponseEntity.ok(deal) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
 }

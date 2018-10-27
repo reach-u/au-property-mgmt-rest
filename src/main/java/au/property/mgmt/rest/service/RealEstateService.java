@@ -14,4 +14,6 @@ public interface RealEstateService {
 
     Deal signBySeller(long transactionId);
 
+    Deal findTransactionDetails(long transactionId);
+
 }

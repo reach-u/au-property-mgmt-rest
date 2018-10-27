@@ -49,6 +49,11 @@ public class RealEstateServiceImpl implements RealEstateService {
         return sign(transactionId, Deal::signBySeller);
     }
 
+    @Override
+    public Deal findTransactionDetails(long transactionId) {
+        return dealCache.getIfPresent(transactionId);
+    }
+
     private Deal sign(long transactionId, Consumer<Deal> sign) {
         log.info("sign by buyer: transaction={}", transactionId);
         Deal deal = dealCache.getIfPresent(transactionId);
