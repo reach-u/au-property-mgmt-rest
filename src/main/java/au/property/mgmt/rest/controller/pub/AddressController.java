@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
+
 /**
  * @author taaviv @ 26.10.18
  */
@@ -50,6 +52,12 @@ public class AddressController {
                 address1.getCoordinates().getLat(), address2.getCoordinates().getLat(),
                 address1.getCoordinates().getLon(), address2.getCoordinates().getLon()
         ));
+    }
+
+    @RequestMapping(value = "find_by_owner/{ownerIdCode}", method = RequestMethod.GET)
+    public ResponseEntity<Address[]> findByOwner(@PathVariable long ownerIdCode) {
+        return ResponseEntity.ok(Arrays.stream(addressService.findAll())
+                .filter(address -> address.getDetailedData().getCurrentOwner() == ownerIdCode).toArray(Address[]::new));
     }
 
     private static int distance(double lat1, double lat2, double lon1, double lon2) {

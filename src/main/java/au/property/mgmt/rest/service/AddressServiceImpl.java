@@ -39,6 +39,12 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    public Address[] findAll() {
+        return AddressConverter.convert(searcher.search(
+                QueryBuilders.matchAllQuery(), Indices.address(), LIMIT)).toArray(new Address[0]);
+    }
+
+    @Override
     public Address search(long id) {
         log.info("search: id={}", id);
         QueryBuilder builder = QueryBuilders.idsQuery().addIds(id + "");
