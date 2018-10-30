@@ -9,7 +9,6 @@ import java.util.Date;
  * @author taaviv @ 27.10.18
  */
 @Data
-@NoArgsConstructor
 public class Deal {
 
     private long transactionId;
@@ -24,10 +23,13 @@ public class Deal {
 
     private boolean paid;
 
+    private final Date startedDate;
+
     public Deal(long transactionId, long buyerIdCode, Address address) {
         this.transactionId = transactionId;
         this.buyerIdCode = buyerIdCode;
         this.address = address;
+        startedDate = new Date();
     }
 
     public void signByBuyer() {

@@ -8,9 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * @author taaviv @ 27.10.18
@@ -21,7 +24,7 @@ public class RealEstateServiceImpl implements RealEstateService {
 
     private static final AtomicLong COUNTER = new AtomicLong();
 
-    private final Cache<Long, Deal> dealCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
+    private final Cache<Long, Deal> dealCache = CacheBuilder.newBuilder().expireAfterAccess(24, TimeUnit.HOURS).build();
 
     private final AddressService addressService;
 
@@ -53,7 +56,16 @@ public class RealEstateServiceImpl implements RealEstateService {
 
     @Override
     public Deal findTransactionDetails(long transactionId) {
+        log.info("find transaction details: id={}", transactionId);
         return dealCache.getIfPresent(transactionId);
+    }
+
+    @Override
+    public Collection<Deal> findTransactionDetailsByAddress(long addressId) {
+        log.info("find transaction details: address id={}", addressId);
+        return dealCache.asMap().values().stream()
+                .filter(deal -> deal.getAddress().getId() == addressId)
+                .sorted(Comparator.comparing(Deal::getStartedDate)).collect(Collectors.toList());
     }
 
     private Deal sign(long transactionId, Consumer<Deal> sign) {

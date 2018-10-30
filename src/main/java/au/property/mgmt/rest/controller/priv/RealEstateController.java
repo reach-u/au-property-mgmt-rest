@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collection;
+
 /**
  * @author taaviv @ 26.10.18
  */
@@ -69,6 +71,11 @@ public class RealEstateController {
     public ResponseEntity<Deal> details(@PathVariable long transactionId) {
         Deal deal = realEstateService.findTransactionDetails(transactionId);
         return deal != null ? ResponseEntity.ok(deal) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @RequestMapping(value = "details_by_address/{addressId}", method = RequestMethod.GET)
+    public ResponseEntity<Collection<Deal>> detailsByAddress(@PathVariable long addressId) {
+        return ResponseEntity.ok(realEstateService.findTransactionDetailsByAddress(addressId));
     }
 
 }
