@@ -9,6 +9,7 @@ import okhttp3.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,9 +24,12 @@ import java.io.IOException;
 @Slf4j
 public class ProxyController {
 
-    private static final String URL = "https://egov-demo-ss3.westeurope.cloudapp.azure.com/restapi/GOV/M-LAND/RE-REG" +
-            "?xRoadInstance=EGOV-EXAMPLE&memberClass=GOV&memberCode=M-HOMEAFFAIRS&subsystemCode=POP-REG" +
-            "&serviceCode=persons&serviceVersion=1&dateFrom=1900-01-01T00:00:00.440Z&dateTo=2018-10-30T23:59:59.440Z";
+    private static final String ALL_PERSONS_URL = "https://egov-demo-ss3.westeurope.cloudapp.azure.com" +
+            "/restapi/GOV/M-LAND/RE-REG?xRoadInstance=EGOV-EXAMPLE&memberClass=GOV&memberCode=M-HOMEAFFAIRS" +
+            "&subsystemCode=POP-REG&serviceCode=persons&serviceVersion=1&dateFrom=1900-01-01T00:00:00.440Z" +
+            "&dateTo=2018-10-30T23:59:59.440Z";
+
+    private static final String PERSON_URL = "http://139.59.148.64/coco-api/persons/%s";
 
     private final OkHttpClient client;
 
@@ -36,8 +40,16 @@ public class ProxyController {
 
     @RequestMapping(value = "persons", method = RequestMethod.GET)
     public ResponseEntity<String> getPersons() {
-        Request request = new Request.Builder().url(URL).build();
+        return executeRequest(ALL_PERSONS_URL);
+    }
 
+    @RequestMapping(value = "persons/{personId}", method = RequestMethod.GET)
+    public ResponseEntity<String> getPerson(@PathVariable String personId) {
+        return executeRequest(String.format(PERSON_URL, personId));
+    }
+
+    private ResponseEntity<String> executeRequest(String requestUrl) {
+        Request request = new Request.Builder().url(requestUrl).build();
         Response response;
         try {
             response = client.newCall(request).execute();
