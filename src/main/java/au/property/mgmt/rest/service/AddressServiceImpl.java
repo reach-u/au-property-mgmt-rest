@@ -1,6 +1,7 @@
 package au.property.mgmt.rest.service;
 
 import au.property.mgmt.rest.elasticsearch.ElasticPersister;
+import au.property.mgmt.rest.elasticsearch.ElasticQueryBuilder;
 import au.property.mgmt.rest.elasticsearch.ElasticSearcher;
 import au.property.mgmt.rest.elasticsearch.Indices;
 import au.property.mgmt.rest.model.Address;

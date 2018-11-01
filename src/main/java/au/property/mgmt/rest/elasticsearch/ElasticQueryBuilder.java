@@ -1,4 +1,4 @@
-package au.property.mgmt.rest.service;
+package au.property.mgmt.rest.elasticsearch;
 
 import org.elasticsearch.common.lucene.search.function.CombineFunction;
 import org.elasticsearch.common.unit.Fuzziness;
@@ -13,14 +13,20 @@ import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
  */
 public class ElasticQueryBuilder {
 
+    private static final String CONTAINS_NUMBER_PATTERN = ".*\\d+.*";
+
     public static QueryBuilder createGeocodeQuery(String query) {
         BoolQueryBuilder mQueryBuilderForTopLevelFilter = QueryBuilders.boolQuery()
-                .should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery("houseNumber")))
-                .should(QueryBuilders.matchQuery("houseNumber", query).analyzer("standard"));
+                .should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery("house")))
+                .should(QueryBuilders.matchQuery("house", query).analyzer("standard"));
 
-        return QueryBuilders.boolQuery()
-                .must(createQuery(query))
-                .filter(mQueryBuilderForTopLevelFilter);
+        BoolQueryBuilder builder = QueryBuilders.boolQuery().must(createQuery(query));
+
+        if (query.matches(CONTAINS_NUMBER_PATTERN)) {
+            builder = builder.filter(mQueryBuilderForTopLevelFilter);
+        }
+
+        return builder;
     }
 
     private static FunctionScoreQueryBuilder createQuery(String query) {
