@@ -40,11 +40,13 @@ public class ProxyController {
 
     @RequestMapping(value = "persons", method = RequestMethod.GET)
     public ResponseEntity<String> getPersons() {
+        log.info("find all persons");
         return executeRequest(ALL_PERSONS_URL);
     }
 
     @RequestMapping(value = "persons/{personId}", method = RequestMethod.GET)
     public ResponseEntity<String> getPerson(@PathVariable String personId) {
+        log.info("find person: id={}", personId);
         return executeRequest(String.format(PERSON_URL, personId));
     }
 
