@@ -15,6 +15,8 @@ public class Deal {
 
     private long buyerIdCode;
 
+    private long sellerIdCode;
+
     private Address address;
 
     private Date signedByBuyer;
@@ -28,6 +30,10 @@ public class Deal {
     public Deal(long transactionId, long buyerIdCode, Address address) {
         this.transactionId = transactionId;
         this.buyerIdCode = buyerIdCode;
+        DetailedData detailedData = address.getDetailedData();
+        if (detailedData != null) {
+            this.sellerIdCode = detailedData.getCurrentOwner();
+        }
         this.address = address;
         startedDate = new Date();
     }

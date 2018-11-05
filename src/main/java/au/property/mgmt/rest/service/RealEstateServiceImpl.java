@@ -68,6 +68,14 @@ public class RealEstateServiceImpl implements RealEstateService {
                 .sorted(Comparator.comparing(Deal::getStartedDate)).collect(Collectors.toList());
     }
 
+    @Override
+    public Collection<Deal> findTransactionDetailsByPerson(long personId) {
+        log.info("find transaction details: person id={}", personId);
+        return dealCache.asMap().values().stream()
+                .filter(deal -> deal.getBuyerIdCode() == personId || deal.getSellerIdCode() == personId)
+                .sorted(Comparator.comparing(Deal::getStartedDate)).collect(Collectors.toList());
+    }
+
     private Deal sign(long transactionId, Consumer<Deal> sign) {
         Deal deal = dealCache.getIfPresent(transactionId);
         if (deal != null) {

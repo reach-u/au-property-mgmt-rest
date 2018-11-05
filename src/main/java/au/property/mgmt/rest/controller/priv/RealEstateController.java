@@ -78,4 +78,9 @@ public class RealEstateController {
         return ResponseEntity.ok(realEstateService.findTransactionDetailsByAddress(addressId));
     }
 
+    @RequestMapping(value = "details_by_person/{personId}", method = RequestMethod.GET)
+    public ResponseEntity<Collection<Deal>> detailsByPerson(@PathVariable long personId) {
+        return ResponseEntity.ok(realEstateService.findTransactionDetailsByPerson(personId));
+    }
+
 }

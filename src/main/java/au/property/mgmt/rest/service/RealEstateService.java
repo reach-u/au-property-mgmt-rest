@@ -20,4 +20,6 @@ public interface RealEstateService {
 
     Collection<Deal> findTransactionDetailsByAddress(long addressId);
 
+    Collection<Deal> findTransactionDetailsByPerson(long personId);
+
 }
