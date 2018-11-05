@@ -56,4 +56,6 @@ public class DetailedData {
 
     private Long mortgageSubject;
 
+    private Double[][] cadastre;
+
 }
