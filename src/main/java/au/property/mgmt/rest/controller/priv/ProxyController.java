@@ -29,7 +29,9 @@ public class ProxyController {
             "&subsystemCode=POP-REG&serviceCode=persons&serviceVersion=1&dateFrom=1900-01-01T00:00:00.440Z" +
             "&dateTo=2018-10-30T23:59:59.440Z";
 
-    private static final String PERSON_URL = "http://139.59.148.64/coco-api/persons/%s";
+    private static final String PERSON_URL = "https://egov-demo-ss3.westeurope.cloudapp.azure.com/" +
+            "restapi/GOV/M-LAND/RE-REG/%s?xRoadInstance=EGOV-EXAMPLE&memberClass=GOV&memberCode=M-JUSTICE" +
+            "&subsystemCode=CREC-REG&serviceCode=persons&serviceVersion=1";
 
     private final OkHttpClient client;
 
