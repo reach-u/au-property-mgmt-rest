@@ -19,8 +19,10 @@ import java.util.Objects;
 @Slf4j
 public class TaxPaymentServiceImpl implements TaxPaymentService {
 
-    private static final String REQ_URL = "https://rkdemo.aktors.ee/proto/pay?amount=20.0" +
-            "&currency=USD&payerData=%d&referenceNumber=1213129552&paymentTime=%d";
+    private static final String REQ_URL = "https://egov-demo-ss3.westeurope.cloudapp.azure.com" +
+            "/restapi/GOV/M-LAND/RE-REG?xRoadInstance=EGOV-EXAMPLE&memberClass=GOV" +
+            "&memberCode=M-FINANCE&subsystemCode=BUDGET-MGMT&serviceCode=pay&serviceVersion=1" +
+            "&amount=20.0&currency=USD&payerData=%d&referenceNumber=1213129552&paymentTime=%d";
 
     private static final String OK_RESPONSE = "OK";
 
