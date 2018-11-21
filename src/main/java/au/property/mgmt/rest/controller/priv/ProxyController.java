@@ -24,14 +24,18 @@ import java.io.IOException;
 @Slf4j
 public class ProxyController {
 
-    private static final String ALL_PERSONS_URL = "https://egov-demo-ss3.westeurope.cloudapp.azure.com" +
-            "/restapi/GOV/M-LAND/RE-REG?xRoadInstance=EGOV-EXAMPLE&memberClass=GOV&memberCode=M-HOMEAFFAIRS" +
-            "&subsystemCode=POP-REG&serviceCode=persons&serviceVersion=1&dateFrom=1900-01-01T00:00:00.440Z" +
-            "&dateTo=2018-10-30T23:59:59.440Z";
+    private static final String ALL_PERSONS_URL = "http://africa.nortal.com/person-registry/persons?dateFrom=1900-01-01T00:00:00.440Z&dateTo=2018-11-21T10%3A17%3A00.716Z";
 
-    private static final String PERSON_URL = "https://egov-demo-ss3.westeurope.cloudapp.azure.com/" +
-            "restapi/GOV/M-LAND/RE-REG/%s?xRoadInstance=EGOV-EXAMPLE&memberClass=GOV&memberCode=M-JUSTICE" +
-            "&subsystemCode=CREC-REG&serviceCode=persons&serviceVersion=1";
+//    private static final String ALL_PERSONS_URL = "https://egov-demo-ss3.westeurope.cloudapp.azure.com" +
+//            "/restapi/GOV/M-LAND/RE-REG?xRoadInstance=EGOV-EXAMPLE&memberClass=GOV&memberCode=M-HOMEAFFAIRS" +
+//            "&subsystemCode=POP-REG&serviceCode=persons&serviceVersion=1&dateFrom=1900-01-01T00:00:00.440Z" +
+//            "&dateTo=2018-10-30T23:59:59.440Z";
+
+    private static final String PERSON_URL = "http://africa.nortal.com/person-registry/persons/%s";
+
+//    private static final String PERSON_URL = "https://egov-demo-ss3.westeurope.cloudapp.azure.com/" +
+//            "restapi/GOV/M-LAND/RE-REG/%s?xRoadInstance=EGOV-EXAMPLE&memberClass=GOV&memberCode=M-JUSTICE" +
+//            "&subsystemCode=CREC-REG&serviceCode=persons&serviceVersion=1";
 
     private final OkHttpClient client;
 
