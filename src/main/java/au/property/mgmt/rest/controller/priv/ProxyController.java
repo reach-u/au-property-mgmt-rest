@@ -7,6 +7,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,18 +25,16 @@ import java.io.IOException;
 @Slf4j
 public class ProxyController {
 
-//    private static final String ALL_PERSONS_URL = "http://africa.nortal.com/person-registry/persons?dateFrom=1900-01-01T00:00:00.440Z&dateTo=2018-11-21T10%3A17%3A00.716Z";
+    /* private static final String allPersonsUrl = "http://africa.nortal.com/person-registry/persons?" +
+            "dateFrom=1900-01-01T00:00:00.440Z&dateTo=2018-11-21T10%3A17%3A00.716Z"; */
 
-    private static final String ALL_PERSONS_URL = "https://egov-demo-ss3.westeurope.cloudapp.azure.com" +
-            "/restapi/GOV/M-LAND/RE-REG?xRoadInstance=EGOV-EXAMPLE&memberClass=GOV&memberCode=M-HOMEAFFAIRS" +
-            "&subsystemCode=POP-REG&serviceCode=persons&serviceVersion=1&dateFrom=1900-01-01T00:00:00.440Z" +
-            "&dateTo=2018-10-30T23:59:59.440Z";
+    @Value("${proxy.url.all.persons}")
+    private String allPersonsUrl;
 
-//    private static final String PERSON_URL = "http://africa.nortal.com/person-registry/persons/%s";
+//    private static final String personUrl = "http://africa.nortal.com/person-registry/persons/%s";
 
-    private static final String PERSON_URL = "https://egov-demo-ss3.westeurope.cloudapp.azure.com/" +
-            "restapi/GOV/M-LAND/RE-REG/%s?xRoadInstance=EGOV-EXAMPLE&memberClass=GOV&memberCode=M-JUSTICE" +
-            "&subsystemCode=CREC-REG&serviceCode=persons&serviceVersion=1";
+    @Value("${proxy.url.person}")
+    private String personUrl;
 
     private final OkHttpClient client;
 
@@ -47,13 +46,13 @@ public class ProxyController {
     @RequestMapping(value = "persons", method = RequestMethod.GET)
     public ResponseEntity<String> getPersons() {
         log.info("find all persons");
-        return executeRequest(ALL_PERSONS_URL);
+        return executeRequest(allPersonsUrl);
     }
 
     @RequestMapping(value = "persons/{personId}", method = RequestMethod.GET)
     public ResponseEntity<String> getPerson(@PathVariable String personId) {
         log.info("find person: id={}", personId);
-        return executeRequest(String.format(PERSON_URL, personId));
+        return executeRequest(String.format(personUrl, personId));
     }
 
     private ResponseEntity<String> executeRequest(String requestUrl) {
@@ -80,5 +79,4 @@ public class ProxyController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 }

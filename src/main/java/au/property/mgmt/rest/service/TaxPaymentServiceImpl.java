@@ -7,10 +7,10 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * @author taaviv @ 27.10.18
@@ -19,13 +19,11 @@ import java.util.Objects;
 @Slf4j
 public class TaxPaymentServiceImpl implements TaxPaymentService {
 
-    /*private static final String REQ_URL = "https://egov-demo-ss3.westeurope.cloudapp.azure.com" +
-            "/restapi/GOV/M-LAND/RE-REG?xRoadInstance=EGOV-EXAMPLE&memberClass=GOV" +
-            "&memberCode=M-FINANCE&subsystemCode=BUDGET-MGMT&serviceCode=pay&serviceVersion=1" +
-            "&amount=20.0&currency=USD&payerData=%d&referenceNumber=1213129552&paymentTime=%d";*/
+    /* private static final String reqUrl = "https://rkdemo.aktors.ee/proto/pay?" +
+            "amount=20.0&currency=USD&payerData=%d&referenceNumber=1213129552&paymentTime=%d"; */
 
-    private static final String REQ_URL = "https://rkdemo.aktors.ee/proto/pay?amount=20.0" +
-            "&currency=USD&payerData=%d&referenceNumber=1213129552&paymentTime=%d";
+    @Value("${proxy.url.pay.tax}")
+    private String reqUrl;
 
     private static final String OK_RESPONSE = "OK";
 
@@ -39,7 +37,7 @@ public class TaxPaymentServiceImpl implements TaxPaymentService {
     @Override
     public boolean pay(Deal deal) {
         log.info("pay tax: {}", deal);
-        String url = String.format(REQ_URL, deal.getBuyerIdCode(), System.currentTimeMillis());
+        String url = String.format(reqUrl, deal.getBuyerIdCode(), System.currentTimeMillis());
         Request request = new Request.Builder().url(url).build();
         Response response;
         try {
