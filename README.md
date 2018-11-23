@@ -20,7 +20,7 @@ PROXY_URL_ALL_PERSONS=https://egov-demo-ss3.westeurope.cloudapp.azure.com/restap
 ```
 Get person by ID (%s is replaced with ID):
 ```
-PROXY_URL_ALL_PERSON=https://egov-demo-ss3.westeurope.cloudapp.azure.com/restapi/GOV/M-LAND/RE-REG/%s?xRoadInstance=EGOV-EXAMPLE&memberClass=GOV&memberCode=M-JUSTICE&subsystemCode=CREC-REG&serviceCode=persons&serviceVersion=1
+PROXY_URL_PERSON=https://egov-demo-ss3.westeurope.cloudapp.azure.com/restapi/GOV/M-LAND/RE-REG/%s?xRoadInstance=EGOV-EXAMPLE&memberClass=GOV&memberCode=M-JUSTICE&subsystemCode=CREC-REG&serviceCode=persons&serviceVersion=1
 ```
 Pay tax (first %d is replaced with payer ID and second %d is replaced with current timestamp):
 ```
