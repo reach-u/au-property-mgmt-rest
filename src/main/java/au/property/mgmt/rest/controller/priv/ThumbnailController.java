@@ -38,6 +38,10 @@ public class ThumbnailController {
             imageSrc = "classpath:images/PropID_30_KirinyagaRd_124.png";
         } else if (propertyId == 31) {
             imageSrc = "classpath:images/PropID_31_MwangekaRd_168.png";
+        } else if (propertyId == 32) {
+            imageSrc = "classpath:images/32_preview_pic.png";
+        } else if (propertyId == 33) {
+            imageSrc = "classpath:images/33_preview_pic.png";
         }
 
         byte[] media = Files.readAllBytes(ResourceUtils.getFile(imageSrc).toPath());
