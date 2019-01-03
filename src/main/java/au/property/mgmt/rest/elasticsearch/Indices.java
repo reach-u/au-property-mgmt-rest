@@ -17,4 +17,6 @@ public class Indices {
 
     public static Supplier<String> payment() { return () -> "payment"; }
 
+    public static Supplier<String> zone() { return () -> "zone"; }
+
 }
