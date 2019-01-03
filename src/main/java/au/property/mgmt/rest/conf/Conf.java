@@ -11,9 +11,8 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.X509TrustManager;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -22,8 +21,9 @@ import java.net.UnknownHostException;
  * @author taaviv @ 25.10.18
  */
 @Configuration
+@EnableScheduling
 @EnableAutoConfiguration
-@ComponentScan(basePackages = { "au.property.mgmt.rest" })
+@ComponentScan(basePackages = {"au.property.mgmt.rest"})
 public class Conf {
 
     @Value("${elasticsearch.host}")

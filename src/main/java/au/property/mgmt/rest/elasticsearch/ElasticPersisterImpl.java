@@ -1,6 +1,7 @@
 package au.property.mgmt.rest.elasticsearch;
 
 import au.property.mgmt.rest.model.Address;
+import au.property.mgmt.rest.model.LandTaxPayment;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +37,18 @@ public class ElasticPersisterImpl implements ElasticPersister {
         try {
             client.prepareIndex(index.get(), Address.class.getSimpleName().toLowerCase(), address.getId() + "")
                     .setSource(OBJECT_MAPPER.writeValueAsString(address), XContentType.JSON).execute().actionGet();
+        }
+        catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void saveTaxPayment(LandTaxPayment taxPayment, Supplier<String> index) {
+        log.debug("save payment: {}", taxPayment);
+        try {
+            client.prepareIndex(index.get(), LandTaxPayment.class.getSimpleName().toLowerCase(), taxPayment.getId() + "")
+                    .setSource(OBJECT_MAPPER.writeValueAsString(taxPayment), XContentType.JSON).execute().actionGet();
         }
         catch (JsonProcessingException e) {
             throw new RuntimeException(e);

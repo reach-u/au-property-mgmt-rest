@@ -2,6 +2,7 @@ package au.property.mgmt.rest.model;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -57,5 +58,9 @@ public class DetailedData {
     private Long mortgageSubject;
 
     private Double[][] cadastre;
+
+    private LandTaxZone taxZone;
+
+    private BigDecimal landTaxValue;
 
 }
