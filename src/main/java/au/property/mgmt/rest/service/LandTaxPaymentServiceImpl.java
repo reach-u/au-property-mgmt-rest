@@ -4,6 +4,7 @@ import au.property.mgmt.rest.elasticsearch.ElasticPersister;
 import au.property.mgmt.rest.elasticsearch.ElasticSearcher;
 import au.property.mgmt.rest.elasticsearch.Indices;
 import au.property.mgmt.rest.model.Address;
+import au.property.mgmt.rest.model.DTO.TaxAreaStatsDTO;
 import au.property.mgmt.rest.model.LandTaxPayment;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -15,10 +16,8 @@ import org.springframework.stereotype.Service;
 import javax.management.InstanceNotFoundException;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -51,11 +50,28 @@ public class LandTaxPaymentServiceImpl implements LandTaxPaymentService {
     }
 
     @Override
+    public LandTaxPayment[] getAllLandTaxPayments() {
+        log.info("Find all payments");
+        return PaymentConverter.convert(searcher.search(
+                QueryBuilders.matchAllQuery(), Indices.payment(), 1000)).toArray(new LandTaxPayment[0]);
+    }
+
+    @Override
     public Optional<LandTaxPayment> fetchLandTaxPayment(long id) {
         log.info("search: id={}", id);
         QueryBuilder builder = QueryBuilders.idsQuery().addIds(id + "");
         Collection<LandTaxPayment> payments = PaymentConverter.convert(searcher.search(builder, Indices.payment(), 1));
         return Optional.of(payments.iterator().next());
+    }
+
+    @Override
+    public List<TaxAreaStatsDTO> getAreaStatistics() {
+        Map<String, List<LandTaxPayment>> paymentsGroupedByZoneName = Arrays.stream(getAllLandTaxPayments())
+                .collect(Collectors.groupingBy(payment -> payment.getAddress().getDetailedData().getTaxZone().getName()));
+        return paymentsGroupedByZoneName.entrySet()
+                .stream()
+                .map(entry -> new TaxAreaStatsDTO(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 
     private void createPayment(Address address) {
