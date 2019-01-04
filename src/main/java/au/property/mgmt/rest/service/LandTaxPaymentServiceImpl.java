@@ -54,7 +54,7 @@ public class LandTaxPaymentServiceImpl implements LandTaxPaymentService {
 
         for (Address address : addressService.findAll()) {
             createPayment(address, newId);
-            newId = newId + 1;j
+            newId = newId + 1;
         }
     }
 
