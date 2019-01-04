@@ -5,6 +5,7 @@ import au.property.mgmt.rest.elasticsearch.ElasticQueryBuilder;
 import au.property.mgmt.rest.elasticsearch.ElasticSearcher;
 import au.property.mgmt.rest.elasticsearch.Indices;
 import au.property.mgmt.rest.model.Address;
+import au.property.mgmt.rest.service.converters.AddressConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;

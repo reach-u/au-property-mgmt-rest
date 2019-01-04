@@ -3,6 +3,7 @@ package au.property.mgmt.rest.service;
 import au.property.mgmt.rest.elasticsearch.ElasticSearcher;
 import au.property.mgmt.rest.elasticsearch.Indices;
 import au.property.mgmt.rest.model.LandTaxZone;
+import au.property.mgmt.rest.service.converters.ZoneConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -12,4 +12,6 @@ public interface ElasticSearcher {
 
     SearchResponse search(QueryBuilder queryBuilder, Supplier<String> index, int limit);
 
+    SearchResponse searchMaxId(QueryBuilder queryBuilder, Supplier<String> index, int limit);
+
 }

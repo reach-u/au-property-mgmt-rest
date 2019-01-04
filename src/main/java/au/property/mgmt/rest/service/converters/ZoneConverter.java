@@ -1,4 +1,4 @@
-package au.property.mgmt.rest.service;
+package au.property.mgmt.rest.service.converters;
 
 import au.property.mgmt.rest.model.LandTaxZone;
 import com.fasterxml.jackson.databind.ObjectMapper;
