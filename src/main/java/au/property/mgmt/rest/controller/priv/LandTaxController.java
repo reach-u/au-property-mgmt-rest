@@ -38,7 +38,7 @@ public class LandTaxController {
 
     @GetMapping(value = "payments/{userId}")
     public ResponseEntity<LandTaxPayment[]> getUsersPayments(@PathVariable long userId) {
-        log.info("find payments: person id={}", userId);
+        log.info("find payments for person id={}", userId);
         return ResponseEntity.ok(Arrays.stream(landTaxPaymentService.getAllPayments())
                 .filter(payment -> payment.getOwnerIdCode() == userId).toArray(LandTaxPayment[]::new));
     }

@@ -68,13 +68,6 @@ public class LandTaxPaymentServiceImpl implements LandTaxPaymentService {
                 QueryBuilders.matchAllQuery(), Indices.payment(), 1000)).toArray(new LandTaxPayment[0]);
     }
 
-    private Optional<LandTaxPayment> fetchLandTaxPayment(long id) {
-        log.info("search: id={}", id);
-        QueryBuilder builder = QueryBuilders.idsQuery().addIds(id + "");
-        Collection<LandTaxPayment> payments = PaymentConverter.convert(searcher.search(builder, Indices.payment(), 1));
-        return Optional.of(payments.iterator().next());
-    }
-
     @Override
     public List<TaxAreaStatsDTO> getAreaStatistics() {
         Map<String, List<LandTaxPayment>> paymentsGroupedByZoneName = Arrays.stream(getAllPayments())
@@ -83,6 +76,13 @@ public class LandTaxPaymentServiceImpl implements LandTaxPaymentService {
                 .stream()
                 .map(entry -> new TaxAreaStatsDTO(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
+    }
+
+    private Optional<LandTaxPayment> fetchLandTaxPayment(long id) {
+        log.info("search: id={}", id);
+        QueryBuilder builder = QueryBuilders.idsQuery().addIds(id + "");
+        Collection<LandTaxPayment> payments = PaymentConverter.convert(searcher.search(builder, Indices.payment(), 1));
+        return Optional.of(payments.iterator().next());
     }
 
     private void createPayment(Address address, long id) {
