@@ -2,6 +2,7 @@ package au.property.mgmt.rest.service;
 
 import au.property.mgmt.rest.model.Address;
 import au.property.mgmt.rest.model.GazetteerRequest;
+import au.property.mgmt.rest.service.converters.AddressConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;

@@ -6,6 +6,7 @@ import au.property.mgmt.rest.elasticsearch.Indices;
 import au.property.mgmt.rest.model.Address;
 import au.property.mgmt.rest.model.DTO.TaxAreaStatsDTO;
 import au.property.mgmt.rest.model.LandTaxPayment;
+import au.property.mgmt.rest.service.converters.PaymentConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -45,8 +46,16 @@ public class LandTaxPaymentServiceImpl implements LandTaxPaymentService {
     @Scheduled(cron = "0 0 1 1 * ?")
     public void generatePayments() {
         log.info("Monthly payment generation has been started");
-        Arrays.stream(addressService.findAll()).forEach(
-                this::createPayment);
+
+        Collection<LandTaxPayment> payments = PaymentConverter.convert(searcher.searchMaxId(
+                QueryBuilders.matchAllQuery(), Indices.payment(), 1));
+
+        long newId = payments.size() != 0 ? payments.iterator().next().getId() + 1 : 0;
+
+        for (Address address : addressService.findAll()) {
+            createPayment(address, newId);
+            newId = newId + 1;
+        }
     }
 
     @Override
@@ -76,6 +85,7 @@ public class LandTaxPaymentServiceImpl implements LandTaxPaymentService {
 
     private void createPayment(Address address) {
         LandTaxPayment taxPayment = LandTaxPayment.builder()
+                .id(id)
                 .address(address)
                 .dueDate(calculateDueDate())
                 .ownerIdCode(address.getDetailedData().getCurrentOwner())

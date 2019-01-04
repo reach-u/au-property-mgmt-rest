@@ -5,6 +5,7 @@ import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,16 @@ public class ElasticSearcherImpl implements ElasticSearcher {
                 .setSearchType(SearchType.QUERY_THEN_FETCH)
                 .setQuery(queryBuilder)
                 .setSize(limit)
+                .execute().actionGet(TimeValue.timeValueSeconds(timeout));
+    }
+
+    @Override
+    public SearchResponse searchMaxId(QueryBuilder queryBuilder, Supplier<String> index, int limit) {
+        return client.prepareSearch(index.get())
+                .setSearchType(SearchType.QUERY_THEN_FETCH)
+                .setQuery(queryBuilder)
+                .setSize(limit)
+                .addSort("id", SortOrder.DESC)
                 .execute().actionGet(TimeValue.timeValueSeconds(timeout));
     }
 }
