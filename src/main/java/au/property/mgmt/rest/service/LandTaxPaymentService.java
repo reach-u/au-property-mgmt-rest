@@ -10,5 +10,5 @@ public interface LandTaxPaymentService {
 
     void generatePayments();
 
-    Optional<LandTaxPayment> fetchLandTaxPayment(long id);
+    LandTaxPayment[] getAllPayments();
 }

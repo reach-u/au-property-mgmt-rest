@@ -5,11 +5,15 @@ import au.property.mgmt.rest.model.LandTaxZone;
 import au.property.mgmt.rest.service.LandTaxPaymentService;
 import au.property.mgmt.rest.service.LandTaxZoneService;
 import au.property.mgmt.rest.util.Constants;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.InstanceNotFoundException;
+import java.util.Arrays;
 
+@Slf4j
 @RestController
 @RequestMapping(Constants.PRIVATE_API_V1_URL + "/landtax")
 public class LandTaxController {
@@ -28,5 +32,17 @@ public class LandTaxController {
     @PostMapping(value = "pay/{id}")
     public LandTaxPayment pay(@PathVariable long id) throws InstanceNotFoundException {
         return landTaxPaymentService.pay(id);
+    }
+
+    @GetMapping(value = "payments/{userId}")
+    public ResponseEntity<LandTaxPayment[]> getUsersPayments(@PathVariable long userId) {
+        log.info("find payments: person id={}", userId);
+        return ResponseEntity.ok(Arrays.stream(landTaxPaymentService.getAllPayments())
+                .filter(payment -> payment.getOwnerIdCode() == userId).toArray(LandTaxPayment[]::new));
+    }
+
+    @GetMapping(value = "payments")
+    public LandTaxPayment[] getPayments() {
+        return landTaxPaymentService.getAllPayments();
     }
 }
