@@ -54,7 +54,7 @@ public class LandTaxPaymentServiceImpl implements LandTaxPaymentService {
 
         for (Address address : addressService.findAll()) {
             createPayment(address, newId);
-            newId = newId + 1;
+            newId = newId + 1;j
         }
     }
 
@@ -83,7 +83,7 @@ public class LandTaxPaymentServiceImpl implements LandTaxPaymentService {
                 .collect(Collectors.toList());
     }
 
-    private void createPayment(Address address) {
+    private void createPayment(Address address, long id) {
         LandTaxPayment taxPayment = LandTaxPayment.builder()
                 .id(id)
                 .address(address)
