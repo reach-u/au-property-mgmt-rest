@@ -8,6 +8,6 @@ import java.util.List;
 @Data
 public class LandTaxZone {
     private String name;
-    private List<Coordinate> zoneCoordinates;
+    private Double[][] zoneCoordinates;
     private BigDecimal squareMeterPrice;
 }
