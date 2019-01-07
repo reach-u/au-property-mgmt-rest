@@ -1,6 +1,6 @@
 package au.property.mgmt.rest.controller.priv;
 
-import au.property.mgmt.rest.model.DTO.TaxAreaStatsDTO;
+import au.property.mgmt.rest.model.DTO.TaxStatsDTO;
 import au.property.mgmt.rest.model.LandTaxPayment;
 import au.property.mgmt.rest.model.LandTaxZone;
 import au.property.mgmt.rest.service.LandTaxPaymentService;
@@ -49,7 +49,12 @@ public class LandTaxController {
     }
 
     @GetMapping(value = "/stats/area")
-    public List<TaxAreaStatsDTO> getAreaStatistics() {
+    public List<TaxStatsDTO> getAreaStatistics() {
         return landTaxPaymentService.getAreaStatistics();
+    }
+
+    @GetMapping(value = "/stats/month")
+    public List<TaxStatsDTO> getMonthlyStatistics() {
+        return landTaxPaymentService.getMonthlyStatistics();
     }
 }
