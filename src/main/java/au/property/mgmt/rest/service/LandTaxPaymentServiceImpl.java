@@ -15,9 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.management.InstanceNotFoundException;
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -70,6 +68,7 @@ public class LandTaxPaymentServiceImpl implements LandTaxPaymentService {
     @Override
     public List<TaxStatsDTO> getAreaStatistics() {
         Map<String, List<LandTaxPayment>> paymentsGroupedByZoneName = Arrays.stream(getAllPayments())
+                .filter(payment -> paymentIsFromYear(payment, 2018))
                 .collect(Collectors.groupingBy(this::getPaymentZoneName));
         return paymentsGroupedByZoneName.entrySet()
                 .stream()
@@ -120,5 +119,12 @@ public class LandTaxPaymentServiceImpl implements LandTaxPaymentService {
                 "MMM uuuu",
                 Locale.ENGLISH
         ));
+    }
+
+    private boolean paymentIsFromYear(LandTaxPayment landTaxPayment, int yearNumber) {
+        Instant beginOfYear = LocalDateTime.of(yearNumber, Month.JANUARY, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant();
+        Instant endOfYear = LocalDateTime.of(yearNumber, Month.DECEMBER, 31, 23, 59).atZone(ZoneId.systemDefault()).toInstant();
+        Instant paymentInstant = landTaxPayment.getDueDate().toInstant();
+        return paymentInstant.isAfter(beginOfYear) && paymentInstant.isBefore(endOfYear);
     }
 }
