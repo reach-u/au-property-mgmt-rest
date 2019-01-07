@@ -5,6 +5,7 @@ import au.property.mgmt.rest.elasticsearch.ElasticSearcher;
 import au.property.mgmt.rest.elasticsearch.Indices;
 import au.property.mgmt.rest.model.Address;
 import au.property.mgmt.rest.model.DTO.TaxStatsDTO;
+import au.property.mgmt.rest.model.DTO.UserPaymentsDTO;
 import au.property.mgmt.rest.model.LandTaxPayment;
 import au.property.mgmt.rest.service.converters.PaymentConverter;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +57,20 @@ public class LandTaxPaymentServiceImpl implements LandTaxPaymentService {
             createPayment(address, newId);
             newId = newId + 1;
         }
+    }
+
+    @Override
+    public List<UserPaymentsDTO> getPaymentsByUser(long userId) {
+        log.info("find payments for person id={}", userId);
+        Map<String, List<LandTaxPayment>> userPaymentsByMonth = Arrays.stream(getAllPayments())
+                .filter(payment -> payment.getOwnerIdCode() == userId)
+                .collect(Collectors.groupingBy(payment -> getYearMonthNameFromDate(payment.getDueDate())));
+
+        return userPaymentsByMonth.entrySet()
+                .stream()
+                .map(entry -> new UserPaymentsDTO(entry.getKey(), entry.getValue()))
+                .sorted(Comparator.nullsLast(Comparator.comparing(e -> e.getPayments().get(0).getDueDate())))
+                .collect(Collectors.toList());
     }
 
     @Override
