@@ -1,6 +1,6 @@
 package au.property.mgmt.rest.service;
 
-import au.property.mgmt.rest.model.DTO.TaxAreaStatsDTO;
+import au.property.mgmt.rest.model.DTO.TaxStatsDTO;
 import au.property.mgmt.rest.model.LandTaxPayment;
 
 import javax.management.InstanceNotFoundException;
@@ -13,5 +13,7 @@ public interface LandTaxPaymentService {
 
     LandTaxPayment[] getAllPayments();
 
-    List<TaxAreaStatsDTO> getAreaStatistics();
+    List<TaxStatsDTO> getAreaStatistics();
+
+    List<TaxStatsDTO> getMonthlyStatistics();
 }

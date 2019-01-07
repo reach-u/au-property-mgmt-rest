@@ -13,7 +13,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 @Data
-public class TaxAreaStatsDTO {
+public class TaxStatsDTO {
 
     private String name;
 
@@ -25,36 +25,36 @@ public class TaxAreaStatsDTO {
 
     private BigDecimal missingAmount;
 
-    public TaxAreaStatsDTO(String zoneName, List<LandTaxPayment> payments) {
-        this.name = zoneName;
+    public TaxStatsDTO(String name, List<LandTaxPayment> payments) {
+        this.name = name;
         this.numberOfSquareMeters = calculateZoneLandAcreage(payments);
-        this.plannedAmount = calculateZonePlannedAmount(payments);
-        this.paidAmount = calculateZonePaidAmount(payments);
-        this.missingAmount = calculateZoneMissingAmount(payments);
+        this.plannedAmount = calculatePlannedAmount(payments);
+        this.paidAmount = calculatePaidAmount(payments);
+        this.missingAmount = calculateMissingAmount(payments);
     }
 
-    private BigDecimal calculateZoneMissingAmount(List<LandTaxPayment> zonePayments) {
-        return zonePayments.stream()
+    private BigDecimal calculateMissingAmount(List<LandTaxPayment> payments) {
+        return payments.stream()
                 .filter(payment -> !payment.isPaid())
                 .map(LandTaxPayment::getPayable)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private BigDecimal calculateZonePaidAmount(List<LandTaxPayment> zonePayments) {
-        return zonePayments.stream()
+    private BigDecimal calculatePaidAmount(List<LandTaxPayment> payments) {
+        return payments.stream()
                 .filter(LandTaxPayment::isPaid)
                 .map(LandTaxPayment::getPayable)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private BigDecimal calculateZonePlannedAmount(List<LandTaxPayment> zonePayments) {
-        return zonePayments.stream()
+    private BigDecimal calculatePlannedAmount(List<LandTaxPayment> payments) {
+        return payments.stream()
                 .map(LandTaxPayment::getPayable)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private Integer calculateZoneLandAcreage(List<LandTaxPayment> zonePayments) {
-        return zonePayments.stream()
+    private Integer calculateZoneLandAcreage(List<LandTaxPayment> payments) {
+        return payments.stream()
                 .map(LandTaxPayment::getAddress)
                 .filter(distinctByKey(Address::getCoordinates))
                 .map(Address::getDetailedData)

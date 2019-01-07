@@ -4,7 +4,7 @@ import au.property.mgmt.rest.elasticsearch.ElasticPersister;
 import au.property.mgmt.rest.elasticsearch.ElasticSearcher;
 import au.property.mgmt.rest.elasticsearch.Indices;
 import au.property.mgmt.rest.model.Address;
-import au.property.mgmt.rest.model.DTO.TaxAreaStatsDTO;
+import au.property.mgmt.rest.model.DTO.TaxStatsDTO;
 import au.property.mgmt.rest.model.LandTaxPayment;
 import au.property.mgmt.rest.service.converters.PaymentConverter;
 import lombok.extern.slf4j.Slf4j;
@@ -16,12 +16,11 @@ import org.springframework.stereotype.Service;
 
 import javax.management.InstanceNotFoundException;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -69,12 +68,22 @@ public class LandTaxPaymentServiceImpl implements LandTaxPaymentService {
     }
 
     @Override
-    public List<TaxAreaStatsDTO> getAreaStatistics() {
+    public List<TaxStatsDTO> getAreaStatistics() {
         Map<String, List<LandTaxPayment>> paymentsGroupedByZoneName = Arrays.stream(getAllPayments())
-                .collect(Collectors.groupingBy(payment -> payment.getAddress().getDetailedData().getTaxZone().getName()));
+                .collect(Collectors.groupingBy(this::getPaymentZoneName));
         return paymentsGroupedByZoneName.entrySet()
                 .stream()
-                .map(entry -> new TaxAreaStatsDTO(entry.getKey(), entry.getValue()))
+                .map(entry -> new TaxStatsDTO(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TaxStatsDTO> getMonthlyStatistics() {
+        Map<String, List<LandTaxPayment>> paymentsGroupedByMonth = Arrays.stream(getAllPayments())
+                .collect(Collectors.groupingBy(payment -> getYearMonthNameFromDate(payment.getDueDate())));
+        return paymentsGroupedByMonth.entrySet()
+                .stream()
+                .map(entry -> new TaxStatsDTO(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
     }
 
@@ -98,5 +107,18 @@ public class LandTaxPaymentServiceImpl implements LandTaxPaymentService {
     private Date calculateDueDate() {
         LocalDate dueDate = LocalDate.now().plusMonths(1);
         return Date.from(dueDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+
+    private String getPaymentZoneName(LandTaxPayment payment) {
+        return payment.getAddress().getDetailedData().getTaxZone().getName();
+    }
+
+    private String getYearMonthNameFromDate(Date date) {
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        YearMonth yearMonth = YearMonth.from(localDate);
+        return yearMonth.format(DateTimeFormatter.ofPattern(
+                "MMM uuuu",
+                Locale.ENGLISH
+        ));
     }
 }
