@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * @author taaviv @ 26.10.18
@@ -60,6 +61,7 @@ public class AddressServiceImpl implements AddressService {
         log.info("change owner: new owner={}, {}", newOwnerIdCode, address);
         address.getDetailedData().setPreviousOwner(address.getDetailedData().getCurrentOwner());
         address.getDetailedData().setCurrentOwner(newOwnerIdCode);
+        address.getDetailedData().setLastOwnerChangeDate(new Date());
         persister.save(address, Indices.address());
         return address;
     }
