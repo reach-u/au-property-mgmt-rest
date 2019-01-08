@@ -44,18 +44,20 @@ public class LandTaxPaymentServiceImpl implements LandTaxPaymentService {
     }
 
     @Override
-    @Scheduled(cron = "0 0 1 1 * ?")
+    @Scheduled(cron = "0 30 3 * * ?")
     public void generatePayments() {
         log.info("Monthly payment generation has been started");
 
-        Collection<LandTaxPayment> payments = PaymentConverter.convert(searcher.searchMaxId(
-                QueryBuilders.matchAllQuery(), Indices.payment(), 1));
+        long newId = 439;
+        LocalDate beginDate = LocalDate.of(2019, Month.JANUARY, 1);
+        Period diff = Period.between(beginDate, LocalDate.now());
 
-        long newId = payments.size() != 0 ? payments.iterator().next().getId() + 1 : 0;
-
-        for (Address address : addressService.findAll()) {
-            createPayment(address, newId);
-            newId = newId + 1;
+        for (int i = 0; i < diff.getMonths(); i++) {
+            LocalDate dueDate = beginDate.plusMonths(i + 1);
+            for (Address address : addressService.findAll()) {
+                createPayment(address, newId, dueDate);
+                newId = newId + 1;
+            }
         }
     }
 
@@ -108,18 +110,17 @@ public class LandTaxPaymentServiceImpl implements LandTaxPaymentService {
         return Optional.of(payments.iterator().next());
     }
 
-    private void createPayment(Address address, long id) {
+    private void createPayment(Address address, long id, LocalDate dueDate) {
         LandTaxPayment taxPayment = LandTaxPayment.builder()
                 .id(id)
                 .address(address)
-                .dueDate(calculateDueDate())
+                .dueDate(localDateToDate(dueDate))
                 .ownerIdCode(address.getDetailedData().getCurrentOwner())
                 .payable(address.getDetailedData().getLandTaxValue()).build();
         persister.saveTaxPayment(taxPayment, Indices.payment());
     }
 
-    private Date calculateDueDate() {
-        LocalDate dueDate = LocalDate.now().plusMonths(1);
+    private Date localDateToDate(LocalDate dueDate) {
         return Date.from(dueDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 

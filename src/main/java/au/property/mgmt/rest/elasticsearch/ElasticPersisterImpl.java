@@ -35,10 +35,8 @@ public class ElasticPersisterImpl implements ElasticPersister {
     public void save(Address address, Supplier<String> index) {
         log.debug("save: {}", address);
         try {
-            client.prepareIndex(index.get(), Address.class.getSimpleName().toLowerCase(), address.getId() + "")
-                    .setSource(OBJECT_MAPPER.writeValueAsString(address), XContentType.JSON).execute().actionGet();
-        }
-        catch (JsonProcessingException e) {
+            save(index.get(), address.getId(), OBJECT_MAPPER.writeValueAsString(address));
+        } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
@@ -47,12 +45,14 @@ public class ElasticPersisterImpl implements ElasticPersister {
     public void saveTaxPayment(LandTaxPayment taxPayment, Supplier<String> index) {
         log.debug("save payment: {}", taxPayment);
         try {
-            client.prepareIndex(index.get(), LandTaxPayment.class.getSimpleName().toLowerCase(), taxPayment.getId() + "")
-                    .setSource(OBJECT_MAPPER.writeValueAsString(taxPayment), XContentType.JSON).execute().actionGet();
-        }
-        catch (JsonProcessingException e) {
+            save(index.get(), taxPayment.getId(), OBJECT_MAPPER.writeValueAsString(taxPayment));
+        } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
+    private void save(String index, long id, String valueAsString) {
+        client.prepareIndex(index, Address.class.getSimpleName().toLowerCase(), id + "")
+                .setSource(valueAsString, XContentType.JSON).execute().actionGet();
+    }
 }
