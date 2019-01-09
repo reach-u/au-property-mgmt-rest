@@ -26,24 +26,17 @@ public class MonthlyTaxStatsDTO extends TaxStatsDTO {
     }
 
     private List<TaxStatsDTO> calculateIndebtedOwners(List<LandTaxPayment> payments) {
-        if (this.getMissingAmount().equals(BigDecimal.ZERO)) {
-            return Collections.emptyList();
-        }
-
         Map<Long, List<LandTaxPayment>> paymentsGroupedByOwner = payments.stream()
                 .collect(Collectors.groupingBy(LandTaxPayment::getOwnerIdCode));
 
         return paymentsGroupedByOwner
                 .entrySet().stream()
                 .map(entry -> new TaxStatsDTO(String.valueOf(entry.getKey()), entry.getValue()))
+                .filter(entry -> !entry.getMissingAmount().equals(BigDecimal.ZERO))
                 .collect(Collectors.toList());
     }
 
     private Map<Long, Set<Address>> collectDebtorAddresses(List<LandTaxPayment> payments) {
-        if (this.getMissingAmount().equals(BigDecimal.ZERO)) {
-            return Collections.emptyMap();
-        }
-
         Map<Long, List<LandTaxPayment>> paymentsGroupedByOwner = payments.stream()
                 .collect(Collectors.groupingBy(LandTaxPayment::getOwnerIdCode));
 
@@ -55,7 +48,7 @@ public class MonthlyTaxStatsDTO extends TaxStatsDTO {
 
     private Set<Address> getOwnerAddresses(Long ownerId, List<LandTaxPayment> payments) {
         return payments.stream()
-                .filter(payment -> payment.getOwnerIdCode() == ownerId)
+                .filter(payment -> payment.getOwnerIdCode() == ownerId && !payment.isPaid())
                 .map(LandTaxPayment::getAddress)
                 .collect(Collectors.toSet());
     }
