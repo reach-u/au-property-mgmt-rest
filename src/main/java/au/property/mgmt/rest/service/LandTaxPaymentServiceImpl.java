@@ -4,6 +4,7 @@ import au.property.mgmt.rest.elasticsearch.ElasticPersister;
 import au.property.mgmt.rest.elasticsearch.ElasticSearcher;
 import au.property.mgmt.rest.elasticsearch.Indices;
 import au.property.mgmt.rest.model.Address;
+import au.property.mgmt.rest.model.DTO.MonthlyTaxStatsDTO;
 import au.property.mgmt.rest.model.DTO.TaxStatsDTO;
 import au.property.mgmt.rest.model.DTO.UserPaymentsDTO;
 import au.property.mgmt.rest.model.LandTaxPayment;
@@ -99,7 +100,8 @@ public class LandTaxPaymentServiceImpl implements LandTaxPaymentService {
                 .collect(Collectors.groupingBy(payment -> getYearMonthNameFromDate(payment.getDueDate())));
         return paymentsGroupedByMonth.entrySet()
                 .stream()
-                .map(entry -> new TaxStatsDTO(entry.getKey(), entry.getValue()))
+                .map(entry -> new MonthlyTaxStatsDTO(entry.getKey(), entry.getValue()))
+                .sorted(Comparator.nullsLast(Comparator.comparing(e -> getYearMonthFromString(e.getName()))))
                 .collect(Collectors.toList());
     }
 
@@ -131,10 +133,18 @@ public class LandTaxPaymentServiceImpl implements LandTaxPaymentService {
     private String getYearMonthNameFromDate(Date date) {
         LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         YearMonth yearMonth = YearMonth.from(localDate);
-        return yearMonth.format(DateTimeFormatter.ofPattern(
+        return yearMonth.format(getYearMonthDateTimeFromatter());
+    }
+
+    private YearMonth getYearMonthFromString(String yearMonthFormattedString) {
+        return YearMonth.parse(yearMonthFormattedString, getYearMonthDateTimeFromatter());
+    }
+
+    private DateTimeFormatter getYearMonthDateTimeFromatter() {
+        return DateTimeFormatter.ofPattern(
                 "MMM uuuu",
                 Locale.ENGLISH
-        ));
+        );
     }
 
     private boolean paymentIsFromYear(LandTaxPayment landTaxPayment, int yearNumber) {
