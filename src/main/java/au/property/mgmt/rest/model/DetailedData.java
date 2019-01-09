@@ -3,6 +3,7 @@ package au.property.mgmt.rest.model;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 /**
@@ -62,5 +63,12 @@ public class DetailedData {
     private LandTaxZone taxZone;
 
     private BigDecimal landTaxValue;
+
+    public BigDecimal getLandTaxValue() {
+        return new BigDecimal(this.propertySize).divide(new BigDecimal(areaUnderBuilding), 2, RoundingMode.HALF_UP)
+                .multiply(new BigDecimal(landAcreage))
+                .multiply(this.taxZone.getSquareMeterPrice())
+                .setScale(2, RoundingMode.CEILING);
+    }
 
 }
