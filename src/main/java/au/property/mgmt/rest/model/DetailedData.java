@@ -65,7 +65,7 @@ public class DetailedData {
     private BigDecimal landTaxValue;
 
     public BigDecimal getLandTaxValue() {
-        return new BigDecimal(this.propertySize).divide(new BigDecimal(areaUnderBuilding))
+        return new BigDecimal(this.propertySize).divide(new BigDecimal(areaUnderBuilding), 2, RoundingMode.HALF_UP)
                 .multiply(new BigDecimal(landAcreage))
                 .multiply(this.taxZone.getSquareMeterPrice())
                 .setScale(2, RoundingMode.CEILING);
